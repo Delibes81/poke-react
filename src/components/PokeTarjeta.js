@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const PokeTarjeta = () => {
+ const PokeTarjeta = () => {
   return (
     <div>PokeTarjeta</div>
   )
