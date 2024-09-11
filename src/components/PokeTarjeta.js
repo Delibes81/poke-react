@@ -22,7 +22,7 @@ const getPokemon = async () => {
     if(respuesta.sprites.other.dream_world.front_default !== null){
       setImagen(respuesta.sprites.other.dream_world.front_default)
     } else {
-      setImagen(respuesta.sprites.oyher['official-artwork'].front_default)
+      setImagen(respuesta.sprites.other['official-artwork'].front_default)
     }
     setCardClass('');
     setLoadClass('d-none');
