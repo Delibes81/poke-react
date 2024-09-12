@@ -59,7 +59,7 @@ const Index = () => {
   }
 
   return (
-    <Container className='shadow bg-danger mt-3'>
+    <Container className='shadow bg-danger mt-3 rounded-3'>
       <Row>
         <Col>
           <InputGroup className='mt-3 mb-3 shadow'>

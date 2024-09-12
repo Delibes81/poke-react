@@ -94,7 +94,7 @@ export const Detalle = () => {
     }
 
   return (
-    <Container className="bg-danger mt-3">
+    <Container className="bg-danger mt-3 rounded-3">
       <Row>
         <Col>
         <Card className="shadow mt-3 mb-3">
