@@ -41,7 +41,7 @@ const getPokemon = async () => {
           <Badge pill color='danger'># {pokemon.id}</Badge>
           <label className='fs-4 text-capitalize'>{pokemon.name}</label>
           <CardFooter className='bg-warning square bg-primary rounded-3'>
-            <Link className='btn btn-dark'>
+            <Link to={'/pokemon/'+pokemon.name} className='btn btn-dark'>
             <i className='fa-solid fa-info-circle'></i> Detalle
             </Link>
           </CardFooter>
