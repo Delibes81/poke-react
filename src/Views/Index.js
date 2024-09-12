@@ -73,6 +73,8 @@ const Index = () => {
         {listado.map ((pok,i)  => (
           <PokeTarjeta poke={pok} key={i} />
         )) }
+        {listado.length === 0 ? 
+        <Col className='text-center mb-3'><b>No se encontraron resultados</b></Col>:''}
         <PaginationControl last={true} limit={limit} total={total}
         page={offset} changePage={page =>goPage(page)} />
       </Row>
