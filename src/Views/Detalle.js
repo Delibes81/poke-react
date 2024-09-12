@@ -14,6 +14,7 @@ export const Detalle = () => {
   const [descripcion, setDescripcion] = useState([]);
   const [imagen, setImagen] = useState([]);
   const [tipos, setTipos] = useState([]);
+  const [habilidades, setHabilidades] = useState([]);
   const [cardClass, setCardClass] = useState('d-none');
   const [LoadClass, setLoadClass] = useState('');
   useEffect(() =>{
@@ -31,6 +32,7 @@ export const Detalle = () => {
         setImagen(respuesta.sprites.other['official-artwork'].front_default)
       }
       await getTipos(respuesta.types);
+      await getHabilidades(respuesta.abilities);
       await getEspecie(respuesta.species.name);
       setCardClass('');
       setLoadClass('d-none');
@@ -46,6 +48,22 @@ export const Detalle = () => {
       });
     });
     }
+
+    const getHabilidades = async (hab) => {
+      let listaHab = [];
+      for (const h of hab) {
+        if (h.ability && h.ability.url) {
+          try {
+            const response = await axios.get(h.ability.url);
+            listaHab.push(response.data.names[5].name);
+          } catch (error) {
+            console.error(`Error fetching ability: ${error}`);
+          }
+        }
+      }
+      setHabilidades(listaHab);
+    };
+
 
     const getEspecie = async (esp) => {
       const liga = `https://pokeapi.co/api/v2/pokemon-species/${esp}`;
@@ -70,9 +88,6 @@ export const Detalle = () => {
       desc.forEach((d) => {
         if(d.language.name === 'es'){
           texto = d.flavor_text;
-        }
-        if(texto !== '' && desc.length > 0){
-          texto = desc[0].flavor_text;
         }
       });
       setDescripcion(texto);
@@ -102,19 +117,35 @@ export const Detalle = () => {
                 <CardText className="fs-3">{descripcion}</CardText>
                 <CardText className="fs-5">
                   Altura: <b>{(pokemon.height)/10} m</b>
-                  Peso: <b>{(pokemon.weight)/10} kg</b>
                 </CardText>
                 <CardText className="fs-5">
+                  Peso: <b>{(pokemon.weight)/10} kg</b>
+                </CardText>
+                {/* <CardText className="fs-5">
                   Tipos: 
-                  { tipos.map((tip,index) => (
+                  { tipos.type.name.map((tip,index) => (
                     <Badge pill color='danger' key={index} className='mx-1'>{tip}</Badge>
                   ))}
-                  </CardText>
+                  </CardText> */}
                   <CardText className="fs-5 text-capitalize">
                   Habitad: <b> {habitad}</b>
                   </CardText>
+                  <CardText className="fs-5">
+                  Habilidades 
+                  { habilidades.map((hab,i) => (
+                    <Badge pill color='dark' key={i} className='mx-1'>{hab}</Badge>
+                  ))}
+                  </CardText>
               </Col>
-              <Col md='6'></Col>
+              <Col md='6'>
+                <img src={imagen} className="img-fluid"></img>
+              </Col>
+              <Col md='12 mt-3'>
+                <CardText className="fs-4 text-center"><b>Estadísticas</b></CardText>
+              </Col>
+              <Col md='12 mt-3'>
+                <CardText className="fs-4 text-center"><b>Cadena de evolucion</b></CardText>
+              </Col>
             </Row>
           </CardBody>
         </Card>
