@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom"
 import { Container, Row, col, Card, CardBody, CardText, Badge, Progress, Col } from "reactstrap"
 import axios from 'axios'
 import PokeTarjeta from "../components/PokeTarjeta"
+import { text } from "@fortawesome/fontawesome"
 
 export const Detalle = () => {
   const { id } = useParams();
@@ -12,7 +13,7 @@ export const Detalle = () => {
   const [habitad, setHabitad] = useState('Desconoicido');
   const [descripcion, setDescripcion] = useState([]);
   const [imagen, setImagen] = useState([]);
-  const [ptipos, setTipos] = useState([]);
+  const [tipos, setTipos] = useState([]);
   const [cardClass, setCardClass] = useState('d-none');
   const [LoadClass, setLoadClass] = useState('');
   useEffect(() =>{
@@ -29,10 +30,53 @@ export const Detalle = () => {
       } else {
         setImagen(respuesta.sprites.other['official-artwork'].front_default)
       }
+      await getTipos(respuesta.types);
+      await getEspecie(respuesta.species.name);
       setCardClass('');
       setLoadClass('d-none');
     })
   }
+
+    const getTipos = async(tip)=> {
+      let listaTipos = [];
+      tip.forEach( (t) => {
+        axios.get(t.type.url).then( async(response) => {
+        listaTipos.push(response.data.names[5].name);
+        setTipos(listaTipos);
+      });
+    });
+    }
+
+    const getEspecie = async (esp) => {
+      const liga = `https://pokeapi.co/api/v2/pokemon-species/${esp}`;
+      axios.get(liga).then( async(response) => {
+        const respuesta = response.data;
+        setEspecie(respuesta);
+        if(respuesta.habitat !== null){
+          await getHabitad(respuesta.habitat.url);
+        }
+        await getDescripcion(respuesta.flavor_text_entries);
+      })
+    }
+
+    const getHabitad = async (hab) => {
+      axios.get(hab).then( async(response) => {
+        setHabitad(response.data.names[1].name);
+      })
+    }
+
+    const getDescripcion = async (desc) => {
+      let texto = '';	
+      desc.forEach((d) => {
+        if(d.language.name === 'es'){
+          texto = d.flavor_text;
+        }
+        if(texto !== '' && desc.length > 0){
+          texto = desc[0].flavor_text;
+        }
+      });
+      setDescripcion(texto);
+    }
 
   return (
     <Container className="bg-danger mt-3">
@@ -54,7 +98,21 @@ export const Detalle = () => {
             </Row>
             <Row className={cardClass}>
               <Col md='6'>
-                <CardText>{pokemon.name}</CardText>
+                <CardText className="h1 text-capitalize">{pokemon.name}</CardText>
+                <CardText className="fs-3">{descripcion}</CardText>
+                <CardText className="fs-5">
+                  Altura: <b>{(pokemon.height)/10} m</b>
+                  Peso: <b>{(pokemon.weight)/10} kg</b>
+                </CardText>
+                <CardText className="fs-5">
+                  Tipos: 
+                  { tipos.map((tip,index) => (
+                    <Badge pill color='danger' key={index} className='mx-1'>{tip}</Badge>
+                  ))}
+                  </CardText>
+                  <CardText className="fs-5 text-capitalize">
+                  Habitad: <b> {habitad}</b>
+                  </CardText>
               </Col>
               <Col md='6'></Col>
             </Row>
